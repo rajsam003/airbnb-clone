@@ -2,9 +2,11 @@
 
 import Heading from "@/app/components/Heading"
 import CategoryInput from "@/app/components/inputs/CategoryInput"
+import CountrySelect from "@/app/components/inputs/CountrySelect"
 import Modal from "@/app/components/modals/Modal"
 import { categories } from "@/app/components/navbar/Categories"
 import useRentModal from "@/app/hooks/useRentModal"
+import dynamic from "next/dynamic"
 import React, { useMemo, useState } from "react"
 import { FieldValues, useForm } from "react-hook-form"
 
@@ -43,6 +45,15 @@ const RentModal = () => {
   })
 
   const category = watch("category")
+  const location = watch("location")
+
+  const Map = useMemo(
+    () =>
+      dynamic(() => import("../Map"), {
+        ssr: false,
+      }),
+    [location]
+  )
 
   const setCustomValue = (id: string, value: any) => {
     setValue(id, value, {
@@ -106,11 +117,27 @@ const RentModal = () => {
     </div>
   )
 
+  if (step === STEPS.LOCATION) {
+    bodyContent = (
+      <div className="flex flex-col gap-8">
+        <Heading
+          title="Where is your place located?"
+          subtitle="Help guests find you!"
+        />
+        <CountrySelect
+          onChange={(value) => setCustomValue("location", value)}
+          value={location}
+        />
+        <Map center={location?.latlng} />
+      </div>
+    )
+  }
+
   return (
     <Modal
       isOpen={rentModal.isOpen}
       onClose={rentModal.onClose}
-      onSubmit={rentModal.onClose}
+      onSubmit={handleOnNext}
       actionLabel={actionLabel}
       secondaryActionLabel={secondaryActionLabel}
       secondaryAction={step === STEPS.CATEGORY ? undefined : handleOnBack}
