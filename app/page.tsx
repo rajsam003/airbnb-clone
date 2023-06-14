@@ -3,7 +3,6 @@ import getListings, { IListingParams } from "@/app/actions/getListings"
 import Container from "@/app/components/Container"
 import EmptyState from "@/app/components/EmptyState"
 import ListingCard from "@/app/components/listings/ListingCard"
-import { FC } from "react"
 
 interface HomeProps {
   searchParams: IListingParams
