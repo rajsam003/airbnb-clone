@@ -3,11 +3,13 @@
 import Button from "@/app/components/Button"
 import Heading from "@/app/components/Heading"
 import Input from "@/app/components/inputs/Input"
+import LoginModal from "@/app/components/modals/LoginModal"
 import Modal from "@/app/components/modals/Modal"
+import useLoginModal from "@/app/hooks/useLoginModal"
 import useRegisterModal from "@/app/hooks/useRegisterModal"
 import axios from "axios"
 import { signIn } from "next-auth/react"
-import React, { useState } from "react"
+import React, { useCallback, useState } from "react"
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form"
 import { toast } from "react-hot-toast"
 import { AiFillGithub } from "react-icons/ai"
@@ -15,6 +17,7 @@ import { FcGoogle } from "react-icons/fc"
 
 const RegisterModal = () => {
   const registerModal = useRegisterModal()
+  const loginModal = useLoginModal()
   const [isLoading, setIsLoading] = useState(false)
 
   const {
@@ -45,6 +48,11 @@ const RegisterModal = () => {
         setIsLoading(false)
       })
   }
+
+  const handleToggle = useCallback(() => {
+    registerModal.onClose()
+    loginModal.onOpen()
+  }, [loginModal, registerModal])
 
   const bodyContent = (
     <div className="flex flex-col gap-4">
@@ -96,7 +104,7 @@ const RegisterModal = () => {
         <div className="flex flex-row items-center gap-2">
           <div>Already have an account?</div>
           <div
-            onClick={registerModal.onClose}
+            onClick={handleToggle}
             className="text-neutral-800 cursor-pointer hover:underline"
           >
             Log in
